@@ -1,0 +1,33 @@
+version: 1
+
+jobs:
+
+  lint:
+    docker:
+      - image: circleci/python:3.7.2
+    
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - v1-dependencies-{{ checksum "requirements-ci.txt" }}
+      - run:
+          name: Install Dependencies
+          command: pip install -r requirements-ci.txt
+      - save_cache:
+          key: v1-dependencies-{{ checksum "requirements-ci.txt" }}
+      - run:
+          name: Lint codebase
+          command: python -m flake8 .
+      
+  build:
+    machine: true
+    steps:
+      - checkout
+      - run: |
+        docker build -t cyberdiscovery/cdbot:latest .
+        docker login -u "$DOCKER_USER" -p "$DOCKER_PASS"
+        docker push cyberdiscovery/cdbot:latest
+    branches:
+      only:
+        - master
