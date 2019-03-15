@@ -26,7 +26,7 @@ jobs:
       - checkout
       - run: |
         docker build -t cyberdiscovery/cdbot:latest .
-        docker login -u "$DOCKER_USER" -p "$DOCKER_PASS"
+        docker login -u $DOCKER_USER -p $DOCKER_PASS
         docker push cyberdiscovery/cdbot:latest
     branches:
       only:
